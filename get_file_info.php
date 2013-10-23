@@ -1,6 +1,6 @@
 <?php 
 	$q = trim($_GET['q']);
-	$api_key = 'c12925627273820b58a9ffb4e5f4f3a0';
+	$api_key = 'your_api_key';
 	function get_movie_data($title) {
 		$title = preg_replace('/( -| \(|\.).*$/', '', $title);
 		$title = str_replace(' ', '+', trim($title));
