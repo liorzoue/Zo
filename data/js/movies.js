@@ -1,15 +1,30 @@
 var diID = "explorer",
 	dir = '',
 	key = 'your_api_key',
-	conf = { }; /* API CONFIG */
+	conf = {
+		api: {}, 	/* API CONFIG */
+		app: {}		/* Application config */
+	};
 	
+function get_app_config(what) {
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", 'config.php');
+	xhr.setRequestHeader("Accept", "application/json");
+	xhr.onreadystatechange = function () {
+	  if (this.readyState == 4) {
+		conf.app = JSON.parse(this.responseText);
+	  }
+	};
+	xhr.send(null);
+}
+
 function get_db_config() {
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", "http://private-c689d-themoviedb.apiary.io/3/configuration?api_key=" + key);
 	xhr.setRequestHeader("Accept", "application/json");
 	xhr.onreadystatechange = function () {
 	  if (this.readyState == 4) {
-		conf = JSON.parse(this.responseText);
+		conf.api = JSON.parse(this.responseText);
 	  }
 	};
 	xhr.send(null);
@@ -79,9 +94,9 @@ function get_file_info (file) {
 			date = sres.release_date;
 			note = sres.vote_average;
 			poster_url = sres.poster_path;
-			backdrop =  conf.images.base_url + 'original' + sres.backdrop_path;
+			backdrop =  conf.api.images.base_url + 'original' + sres.backdrop_path;
 			
-			img = '<img src="' + conf.images.base_url + conf.images.poster_sizes[1] + poster_url + '" class="img-thumbnail img-responsive" alt="Poster">';
+			img = '<img src="' + conf.api.images.base_url + conf.api.images.poster_sizes[1] + poster_url + '" class="img-thumbnail img-responsive" alt="Poster">';
 			
 			
 			$('#movie-title').html(title);

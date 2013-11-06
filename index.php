@@ -1,10 +1,12 @@
-<?php session_start(); ?>
-
 <?php
+	session_start();
+
+	include('config.php');
+	
 	include('data/template/header.php');
+	
 	$_SESSION['dir'] = '';
 ?>
-
         <div class="page-header">
           <h1>Millenium Falcon</h1>
         </div>
