@@ -10,6 +10,9 @@
      http://github.com/liorzoue/Zo
      ---------------------------------------------
      
+     beta-rev3 (20/02/2014)
+     [Back] The come back of movies infos !
+     
      beta-rev2 (17/02/2014)
      [Add] Limonade micro-framework (at 0.5.0)
      [Add] jDownloader basic support
@@ -57,6 +60,7 @@
     const JSON_ERROR = 'error';
     const JSON_ERROR_ID = 'id';
     const JSON_ERROR_HTTP = 'type';
+    const JSON_PATH = 'path';
     
     const JSON_ABOUT = 'about';
     const JSON_MOVIES = 'movies';
@@ -91,6 +95,7 @@
     const JSON_SERVER = 'server';
     const JSON_OUTPUT = 'output';
     const JSON_SPEED = 'speed';
+    const JSON_RESULT = 'result';
     
     const USER_ADMIN = 'admin';
     const USER_INVITE = 'invite';
@@ -103,6 +108,7 @@
     
     $current_user = $_SERVER['PHP_AUTH_USER'];
     // $password = $_SERVER['PHP_AUTH_PW'];
+    $url_from = $_SERVER['HTTP_HOST'];
     
     // format to json
     function my_json($arr) {
@@ -280,6 +286,51 @@
         return $vars;
     }
     
+    function my_json_last_error() {
+        switch (json_last_error()) {
+            case JSON_ERROR_NONE:
+                return 'Aucune erreur';
+                break;
+            case JSON_ERROR_DEPTH:
+                return 'Profondeur maximale atteinte';
+                break;
+            case JSON_ERROR_STATE_MISMATCH:
+                return 'Inadéquation des modes ou underflow';
+                break;
+            case JSON_ERROR_CTRL_CHAR:
+                return 'Erreur lors du contrôle des caractères';
+                break;
+            case JSON_ERROR_SYNTAX:
+                return 'Erreur de syntaxe ; JSON malformé';
+                break;
+            case JSON_ERROR_UTF8:
+                return 'Caractères UTF-8 malformés, probablement une erreur d\'encodage';
+                break;
+        }
+        return 'Erreur inconnue';
+    }
+    
+    function startsWith($needle, $haystack) {
+        return !strncmp($haystack, $needle, strlen($needle));
+    }
+    
+    function endsWith($needle, $haystack) {
+        $length = strlen($needle);
+        if ($length == 0)
+            return true;
+        return (substr($haystack, -$length) === $needle);
+    }
+    
+    function cleanJsonString($data) {
+        $data = trim($data);
+        $data = preg_replace('!\s*//[^"]*\n!U', '\n', $data);
+        $data = preg_replace('!/\*[^"]*\*/!U', '', $data);
+        $data = !startsWith('{', $data) ? '{'.$data : $data;
+        $data = !endsWith('}', $data) ? $data.'}' : $data;
+        $data = preg_replace('!,(\s*[}\]])!U', '$1', $data);
+        return $data;
+    }
+    
     function xmlToArray($xml, $options = array()) {
         $defaults = array(
                           'namespaceSeparator' => ':',//you may want this to be something other than a colon
@@ -302,9 +353,12 @@
                 //replace characters in attribute name
                 if ($options['keySearch']) $attributeName =
                     str_replace($options['keySearch'], $options['keyReplace'], $attributeName);
+                //*
                 $attributeKey = $options['attributePrefix']
                 . ($prefix ? $prefix . $options['namespaceSeparator'] : '')
                 . $attributeName;
+                /*/
+                 $attributeKey = $attributeName; // */
                 $attributesArray[$attributeKey] = (string)$attribute;
             }
         }
@@ -352,9 +406,7 @@
         ? array_merge($attributesArray, $tagsArray, $textContentArray) : $plainText;
         
         //return node as array
-        return array(
-                     $xml->getName() => $propertiesArray
-                     );
+        return array($xml->getName() => $propertiesArray);
     }
     
     function no_output() { }
@@ -575,6 +627,7 @@
     {
         $paths = get_path(false);
         $cat = params(API_URL_CAT);
+        if ($with_json == false) { $cat = null; }
         $i = 0;
         
         if ($cat == 0) { $cat = null; }
@@ -582,7 +635,7 @@
         foreach ($paths[JSON_MOVIES] as $p) {
             $i++;
             if ($cat == null || $cat == $i) {
-                $r[$p] = my_scandir($paths[JSON_PATH_ABS].$p);
+                $r[JSON_MOVIES][$i] = my_scandir($paths[JSON_PATH_ABS].$p);
             }
         }
         
@@ -594,9 +647,13 @@
     
     function get_movie_info()
     {
+        global $api_key, $api_url, $url_from;
+        
         $paths = get_path(false);
         $cat = params(API_URL_CAT);
         $id = params(API_URL_ID);
+        
+        $path = get_path_movies(false)[JSON_MOVIES][intval($cat)-1];
         
         if ($cat == null || $id == null) {
             $r[JSON_ERROR][JSON_ERROR_ID] = 'url';
@@ -604,6 +661,64 @@
             
             return my_json($r);
         }
+        
+        // , $absolute_path, $movies, $include_subfolders
+        $movieListArray = get_movie_list(false);
+        
+        // $arr = preg_split("/[\s]+/", $q);
+        $fileName = $movieListArray[JSON_MOVIES][$cat][$id];
+        
+        $matches = preg_split("/(\(|-)/", $fileName);
+        $lookupName = substr($matches[0], 0, -1);
+        $lookupName = str_replace('\\u00e0', 'a', $lookupName);
+        $lookupName = str_replace('\\u00e9', 'e', $lookupName);
+        
+        function conf($api_key) {
+            global $api_url;
+            $url = $api_url.'/configuration?api_key='.$api_key;
+            
+            $json=file_get_contents($url);
+            $json_string = cleanJsonString($json);
+            $data = json_decode($json_string, true);
+            
+            return $data;
+        }
+        
+        function gmd($api_key, $title) {
+            global $api_url;
+            $title = preg_replace('/( -| \(|\.).*$/', '', $title);
+            $title = str_replace(' ', '+', trim($title));
+            
+            $url = $api_url.'/search/movie?api_key='.$api_key.'&query='.$title;
+            
+            $json=file_get_contents($url);
+            $json_string = cleanJsonString($json);
+            $data = json_decode($json_string, true);
+            $data['json_string'] = $json_string;
+            
+            return $data;
+        }
+        
+        function gmd_det($api_key, $id) {
+            global $api_url;
+            $url = $api_url.'/movie/'.$id.'?api_key='.$api_key;
+            
+            $json = file_get_contents($url);
+            $json_string = cleanJsonString($json);
+            $data = json_decode($json_string, true);
+            
+            return $data;
+        }
+        
+        $r[API_URL_CAT] = $cat;
+        $r[API_URL_ID] = $id;
+        $r[JSON_PATH] = $path;
+        $r['config'] = conf($api_key);
+        $r[JSON_RESULT] = gmd($api_key, $lookupName)['results'][0];
+        $r['movieDetail'] = gmd_det($api_key, $r[JSON_RESULT]['id']);
+        $r['lookupName'] = $lookupName;
+        $r['fileName'] = $movieListArray[JSON_MOVIES][$cat][$id];
+        $r['fileUrl'] = 'http://'.$url_from.$path.'/'.$movieListArray['movies'][$cat][$id];
         
         $r[API_URL_CAT] = $cat;
         $r[API_URL_ID] = $id;
@@ -638,7 +753,7 @@
         } else {
             $out[JSON_OUTPUT] = file_get_contents($url);
         }
-    
+        
         return $out;
     }
     
@@ -732,7 +847,7 @@
         }
         
     }
-
+    
     run();
     
     // EOF
