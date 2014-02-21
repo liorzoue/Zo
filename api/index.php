@@ -10,6 +10,9 @@
      http://github.com/liorzoue/Zo
      ---------------------------------------------
      
+     beta-rev4 (21/02/2014)
+     [Add] Set jDownloader speed limit
+     
      beta-rev3 (20/02/2014)
      [Back] The come back of movies infos !
      
@@ -451,6 +454,7 @@
     dispatch('/download/get/server', 'get_server_jdownloader');
     dispatch('/download/get/currentlist', 'get_download_currentlist');
     dispatch('/download/get/speed', 'get_download_speed');
+    dispatch('/download/limit/**', 'download_limit');
     dispatch('/download/**', 'add_download_url');
     
     
@@ -755,6 +759,17 @@
         }
         
         return $out;
+    }
+    
+    function download_limit($with_json = true)
+    {
+        $limit = params(0);
+        $out = communicate_jdownloader('/action/set/download/limit/'.$limit);
+        
+        $r[JSON_DOWNLOAD][JSON_MESSAGE] = 'download paused (limit:'.$limit.')';
+        
+        if ($with_json) { return my_json($r); }
+        else { return $r; }
     }
     
     function add_download_url($with_json = true)
