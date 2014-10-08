@@ -5,10 +5,10 @@
      
      This API provide infos for movies
      */
-    $api_key = 'c12925627273820b58a9ffb4e5f4f3a0';
-    $api_url = 'http://private-c689d-themoviedb.apiary.io/3';
+    $api_key = 'your_api_key';
+    $api_url = 'http://private-url-themoviedb.apiary.io/3';
     
-    $jdownloader['server'] = '192.168.1.120';
+    $jdownloader['server'] = 'your_jdownloader_server';
     $jdownloader['port'] = '10025';
     
     /*
@@ -20,9 +20,9 @@
      Movies folders
      relative from $absolute_path
      */
-    $movies = array('/films/720p', '/films/1080p', '/films/1080p 3D', '/films/DVD-rip/_Non Classé', '/films/DVD-rip/de Funès');
+    $movies = array('/movies/foo/', '/movies/bar');
     
-    $movies_titles = array('720p', '1080p', '1080p3D', 'DVDripNC', 'DVDripFunes');
+    $movies_titles = array('Foo', 'Bar');
     
     /*
      TV shows folders
@@ -37,6 +37,6 @@
     
     
     $user['invite'] = 'invite';
-    $user['admin'] = 'liorzoue';
+    $user['admin'] = 'admin';
     
     
