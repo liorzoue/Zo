@@ -22,4 +22,4 @@ Coming soon.
 Android
 -------
 
-See (/zo-android)[https://github.com/liorzoue/zo-android] repo.
+See [/zo-android](https://github.com/liorzoue/zo-android) repo.
