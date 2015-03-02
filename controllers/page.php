@@ -45,8 +45,8 @@
 
 	 	$r = '<div class="row">
 	 	<div class="col-xs-6 col-md-3">
-	 	<a href="'.option('base_path').'/launch/app/download" class="thumbnail well">
-	 	<img src="'.option('base_path').'/public/img/zo-android-web.png" alt="ZoDroid">
+	 	<a href="'.option('base_uri').'/launch/app/download" class="thumbnail well">
+	 	<img src="'.option('base_uri').'/public/img/zo-android-web.png" alt="ZoDroid">
 	 	</a>
 	 	</div>
 	 	</div>';
@@ -61,7 +61,7 @@
 	 	$folder = params(0);
 	 	if(!$folder) { $folder = 'default'; }
 
-	 	$movies = utils_scandir('/var/www/films/'.$folder);
+	 	$movies = utils_scandir('/var/www/'.$folder);
 	 	
 	 	$title = 'Movies - '.$folder;
 	 	set('title', 		$title);

@@ -11,7 +11,7 @@ function layout_std_menu($active_page) {
 	}
 
 	function gen_li ($url, $text) {
-		return '<li><a href="'.option('base_path').$url.'">'.$text.'</a></li>';
+		return '<li><a href="'.option('base_uri').$url.'">'.$text.'</a></li>';
 	}
 
 	$paths = api_get_path(false);
@@ -27,32 +27,32 @@ function layout_std_menu($active_page) {
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="<?php echo option('base_path').'/'; ?>">ZoUI</a>
+				<a class="navbar-brand" href="<?php echo option('base_uri').'/'; ?>">ZoUI</a>
 			</div>
 			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
-					<li class="<?php echo is_active($active_page, 'home'); ?>"><a href="<?php echo option('base_path').'/'; ?>"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+					<li class="<?php echo is_active($active_page, 'home'); ?>"><a href="<?php echo option('base_uri').'/'; ?>"><span class="glyphicon glyphicon-home"></span> Home</a></li>
 					<li class="dropdown <?php echo is_active($active_page, 'medias'); ?>">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-film"></span> Multimedia <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li class="dropdown-header">Movies</li>
 							<?php 
 								foreach ($paths[JSON_MOVIES] as $item) {
-									echo gen_li('/media'.$item, explode("/", $item)[count(explode("/", $item)) - 1]);
+									echo gen_li('/media/films'.$item, explode("/", $item)[count(explode("/", $item)) - 1]);
 								}
 							?>
 							<li class="divider"></li>
 							<li class="dropdown-header">Music</li>
 							<?php 
 								foreach ($paths[JSON_MUSICS] as $item) {
-									echo gen_li('/media'.$item, explode("/", $item)[count(explode("/", $item)) - 1]);
+									echo gen_li('/media/music'.$item, explode("/", $item)[count(explode("/", $item)) - 1]);
 								}
 							?>
 							<li class="divider"></li>
 							<li class="dropdown-header">Series</li>
 							<?php 
 								foreach ($paths[JSON_TV_SHOWS] as $item) {
-									echo gen_li('/media'.$item, explode("/", $item)[count(explode("/", $item)) - 1]);
+									echo gen_li('/media/series'.$item, explode("/", $item)[count(explode("/", $item)) - 1]);
 								}
 							?>
 						</ul>
@@ -61,7 +61,7 @@ function layout_std_menu($active_page) {
 					<li class="dropdown <?php echo is_active($active_page, 'autres'); ?>">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-list"></span> Autres <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="<?php echo option('base_path').'/launch/app'; ?>"><span class="glyphicon glyphicon-phone"></span> Mobile App</a></li>
+							<li><a href="<?php echo option('base_uri').'/launch/app'; ?>"><span class="glyphicon glyphicon-phone"></span> Mobile App</a></li>
 						</ul>
 					</li>
 
@@ -69,10 +69,10 @@ function layout_std_menu($active_page) {
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-wrench"></span> Tests <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li class="dropdown-header">Framework</li>
-							<li><a href="<?php echo option('base_path').'/tests'; ?>">Variables</a></li>
-							<li><a href="<?php echo option('base_path').'/api/ui'; ?>">API</a></li>
+							<li><a href="<?php echo option('base_uri').'/tests'; ?>">Variables</a></li>
+							<li><a href="<?php echo option('base_uri').'/api/ui'; ?>">API</a></li>
 							<li class="dropdown-header">System</li>
-							<li><a href="<?php echo option('base_path').'/system/infos'; ?>">Infos</a></li>
+							<li><a href="<?php echo option('base_uri').'/system/infos'; ?>">Infos</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -100,7 +100,7 @@ function layout_std_header($vars) {
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
 	<!-- Custom styles for this template -->
-	<link href="<?php echo option('base_path').'/'; ?>public/css/navbar.css" rel="stylesheet">
+	<link href="<?php echo option('base_uri').'/'; ?>public/css/navbar.css" rel="stylesheet">
 
 	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -120,8 +120,8 @@ function layout_std_scripts($vars) {
 	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
-		<script src="<?php echo option('base_path').'/'; ?>public/js/script.js"></script>
-		<script src="<?php echo option('base_path').'/'; ?>public/js/jsonview.js"></script>
+		<script src="<?php echo option('base_uri').'/'; ?>public/js/script.js"></script>
+		<script src="<?php echo option('base_uri').'/'; ?>public/js/jsonview.js"></script>
     <?php
 }
 
@@ -182,7 +182,7 @@ function layout_home($vars) {
 				<h3>Zo UI</h3>
 				<p>This is an web platform for Zo API.</p>
 				<p>
-					<a class="btn btn-lg btn-primary" href="<?php echo option('base_path').'/launch/app'; ?>" role="button"><span class="glyphicon glyphicon-phone"></span> Launch mobile app</a>
+					<a class="btn btn-lg btn-primary" href="<?php echo option('base_uri').'/launch/app'; ?>" role="button"><span class="glyphicon glyphicon-phone"></span> Launch mobile app</a>
 				</p>
 				<p>
 					<?php echo $content; ?>
@@ -222,7 +222,7 @@ function layout_home($vars) {
 									$ar = utils_scandir('/var/www/'.$item);
 									?>
 									<li>
-										<a href="<?php echo option('base_path').'/media'.$item; ?>">
+										<a href="<?php echo option('base_uri').'/media'.$item; ?>">
 											<span class="badge pull-right"><?php echo count($ar); ?></span>
 											<?php echo explode("/", $item)[count(explode("/", $item)) - 1]; ?>
 										</a>
