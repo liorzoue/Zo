@@ -77,7 +77,7 @@ function layout_std_menu($active_page) {
 					</li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="https://github.com/liorzoue/Zo">Fork me <span class="glyphicon glyphicon-share"></span></a></li>
+					<li><a href="https://github.com/liorzoue/zo-web">Fork me <span class="glyphicon glyphicon-share"></span></a></li>
 				</ul>
 			</div><!--/.nav-collapse -->
 		</div><!--/.container-fluid -->
@@ -190,26 +190,35 @@ function layout_home($vars) {
 			</div>
 
 			<div class="row">
-				<?php
-				for ($i=0; $i < 3; $i++) { 
-					switch ($i) {
-						case 1:
-							$data = JSON_MUSICS;
-							$data_title = 'Music';
-							break;
-
-						case 2:
-							$data = JSON_TV_SHOWS;
-							$data_title = 'TV shows';
-							break;
-
-						case 0:
-						default:
-							$data = JSON_MOVIES;
-							$data_title = 'Movies';
-							break;
-					}
-
+				<?php 
+					$data = JSON_MOVIES;
+					$data_title = 'Movies';
+				?>
+				<div class="col-md-4">
+						<div class="thumbnail">
+							<div class="well well-sm">
+								<?php echo $data_title; ?>
+							</div>
+							<ul class="nav nav-pills nav-stacked">
+								<?php 
+								foreach ($paths[$data] as $item) {
+									$ar = utils_scandir('/var/www/'.$item);
+									?>
+									<li>
+										<a href="<?php echo option('base_uri').'/media/films'.$item; ?>">
+											<span class="badge pull-right"><?php echo count($ar); ?></span>
+											<?php echo explode("/", $item)[count(explode("/", $item)) - 1]; ?>
+										</a>
+									</li>
+									<?php
+								}
+								?>
+							</ul>
+						</div>
+					</div>
+					<?php 
+						$data = JSON_MUSICS;
+						$data_title = 'Music';
 					?>
 					<div class="col-md-4">
 						<div class="thumbnail">
@@ -222,7 +231,7 @@ function layout_home($vars) {
 									$ar = utils_scandir('/var/www/'.$item);
 									?>
 									<li>
-										<a href="<?php echo option('base_uri').'/media'.$item; ?>">
+										<a href="<?php echo option('base_uri').'/media/music'.$item; ?>">
 											<span class="badge pull-right"><?php echo count($ar); ?></span>
 											<?php echo explode("/", $item)[count(explode("/", $item)) - 1]; ?>
 										</a>
@@ -233,10 +242,32 @@ function layout_home($vars) {
 							</ul>
 						</div>
 					</div>
-
-					<?php
-				}
-				?>
+					<?php 
+						$data = JSON_TV_SHOWS;
+						$data_title = 'TV Shows';
+					?>
+					<div class="col-md-4">
+						<div class="thumbnail">
+							<div class="well well-sm">
+								<?php echo $data_title; ?>
+							</div>
+							<ul class="nav nav-pills nav-stacked">
+								<?php 
+								foreach ($paths[$data] as $item) {
+									$ar = utils_scandir('/var/www/'.$item);
+									?>
+									<li>
+										<a href="<?php echo option('base_uri').'/media/series'.$item; ?>">
+											<span class="badge pull-right"><?php echo count($ar); ?></span>
+											<?php echo explode("/", $item)[count(explode("/", $item)) - 1]; ?>
+										</a>
+									</li>
+									<?php
+								}
+								?>
+							</ul>
+						</div>
+					</div>
 
 			</div>
 

@@ -7,6 +7,8 @@
 	 }
 
 	 function page_tests () {
+	 	global $bdd;
+
 	 	// if (!user_is_admin()) { return error_401(); }
 
 	    set('title', 'Test');
@@ -35,6 +37,31 @@
 	    $r .= '<dl class="dl-horizontal"><dt>x-sendfile'         .'</dt><dd><code>'.option('x-sendfile'         ).'</code></dd></dl>';
 
 	    $r .= '</div></div>';
+
+	    $r .= '<div class="panel panel-default">';
+	    $r .= '<div class="panel-heading">';
+	    $r .= '<h3 class="panel-title">Database</h3>';
+	    $r .= '</div><div class="panel-body" style="overflow-y: scroll;">';
+
+		$r .= '<dl class="dl-horizontal"><dt>host'           	.'</dt><dd><code>'.$bdd['host'		].'</code></dd></dl>';
+		$r .= '<dl class="dl-horizontal"><dt>dbname'           	.'</dt><dd><code>'.$bdd['dbname'	].'</code></dd></dl>';
+		$r .= '<dl class="dl-horizontal"><dt>username'          .'</dt><dd><code>'.$bdd['username'	].'</code></dd></dl>';
+
+		try {
+			if(bdd_check()) {
+				$pdo = 'Connection OK';
+			} else {
+				$pdo = 'Connection KO';
+			}
+		} catch (Exception $e) {
+			$pdo = 'Connection Error: '.$e->getMessage();
+		}
+
+
+		$r .= '<dl class="dl-horizontal"><dt>test-connection'	.'</dt><dd><code>'.$pdo.'</code></dd></dl>';
+	    
+	    $r .= '</div></div>';
+
 
 	    return html($r);
 	 }

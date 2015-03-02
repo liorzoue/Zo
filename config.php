@@ -11,6 +11,12 @@
     $jdownloader['server'] = 'your_jdownloader_server';
     $jdownloader['port'] = '10025';
     
+
+    $bdd['host'] = 'localhost';
+    $bdd['dbname'] = 'zo-bdd';
+    $bdd['username'] = 'zo-bdd-user';
+    $bdd['password'] = 'zo-bdd-user-password';
+    
     /*
      webserver files path
      */
@@ -38,5 +44,3 @@
     
     $user['invite'] = 'invite';
     $user['admin'] = 'admin';
-    
-    
